@@ -1,0 +1,36 @@
+version: "3.1"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8000:8000'
+    entrypoint: '/entrypoint.sh'
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/auth
+    env_file:
+      - .env
+
+  mongodb:
+    image: mongo:4.4.4-bionic
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo_data:/data/db
+
+#  rabbitmq:
+#    image: rabbitmq:3.8.17-management
+#    ports:
+#      - 5672:5672
+#      - 15672:15672
+#    volumes:
+#      - rabbitmq_data:/var/lib/rabbitmq
+
+
+volumes:
+  mongo_data:
+#  rabbitmq_data:

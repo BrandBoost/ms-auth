@@ -1,0 +1,28 @@
+default_stages: [ commit ]
+minimum_pre_commit_version: 2.10.1
+exclude: '.*/tests/.*'
+
+repos:
+  - repo: local
+    hooks:
+      - id: mypy
+        name: Run mypy
+        entry: python3 -m mypy
+        exclude: mailing/app/, auth/app/config/, *__init__.py
+        language: system
+        types: [ python ]
+        stages: [ push, commit ]
+
+      - id: autoflake
+        name: Run autoflake
+        description: Removes unused imports from python scripts
+        entry: autoflake
+        language: system
+        types: [ python ]
+        args: [ --in-place, --remove-all-unused-imports ]
+
+      - id: flake8
+        name: Run flake8
+        entry: python3 -m flake8 --ignore=E501
+        language: system
+        types: [ python ]
