@@ -1,0 +1,47 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [ develop, main ]
+  push:
+    branches:
+      - '*'
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+      - name: create .env file
+        run: |
+          echo FASTAPI_HOST=${{ secrets.FASTAPI_HOST }} >> .env
+          echo FASTAPI_PORT=${{ secrets.FASTAPI_PORT }} >> .env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          echo JWT_ACCESS_TTL=${{ secrets.JWT_ACCESS_TTL }} >> .env
+          echo JWT_ALGORITHM=${{ secrets.JWT_ALGORITHM }} >> .env
+          echo JWT_REFRESH_TTL=${{ secrets.JWT_REFRESH_TTL }} >> .env
+          echo MONGO_PORT='27017' >> .env
+          echo MONGO_URI='mongodb://mongodb:27017' >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
+          echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
+          echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
+          echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+          echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+          echo API_FNS_KEY=${{ secrets.API_FNS_KEY }} >> .env
+          echo USER_ID=${{ secrets.USER_ID }} >> .env
+          echo USER_INN=${{ secrets.USER_INN }} >> .env
+          echo USER_TOKEN=${{ secrets.USER_TOKEN }} >> .env
+      - name: Build docker
+        run: docker-compose up -d --build
+      - name: Test
+        env:
+          COMPOSE_INTERACTIVE_NO_CLI: 1
+        run: docker-compose exec -T app pytest
