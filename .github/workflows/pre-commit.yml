@@ -22,8 +22,8 @@ jobs:
       - name: Install dependencies for auth
         run: |
           python -m pip install --upgrade pip
-#          use requirements for install all stubs packages
-#               TODO add packages to Pipfile[dev]
+          /* use requirements for install all stubs packages */
+          /* TODO add packages to Pipfile[dev] */
           pip install -r requirements.txt
           pre-commit install
       - name: Run pre-commit
