@@ -57,6 +57,7 @@ factory-boy = "*"
 jinja2 = "*"
 pytest-httpx = "*"
 pika = "*"
+mypy = "*"
 
 [dev-packages]
 

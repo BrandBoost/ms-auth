@@ -7,8 +7,8 @@ repos:
     hooks:
       - id: mypy
         name: Run mypy
-        entry: python3 -m mypy
-        exclude: mailing/app/, auth/app/config/, *__init__.py
+        entry: python -m mypy
+#        exclude: mailing/app/, auth/app/config/, *__init__.py
         language: system
         types: [ python ]
         stages: [ push, commit ]
@@ -23,6 +23,6 @@ repos:
 
       - id: flake8
         name: Run flake8
-        entry: python3 -m flake8 --ignore=E501
+        entry: python -m flake8 --ignore=E501
         language: system
         types: [ python ]
