@@ -22,9 +22,12 @@ class BaseRepository(MongoManager):
     async def get_by_email(self, email: str):
         return await self.db[self.collection].find_one({"email": email})
 
+    async def get_by_name(self, name: str):
+        return await self.db[self.collection].find_one({"name": name})
+
     async def get_all(self) -> List[BaseUserRead]:
         await self.get_db()
-        return await self.db[self.collection].find().to_list(length=None)
+        return await self.db[self.collection].find({}).to_list(length=None)
 
     async def create(self, instance: dict) -> dict:
         result = await self.db[self.collection].insert_one(instance)
