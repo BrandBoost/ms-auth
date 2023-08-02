@@ -32,9 +32,9 @@ async def test_get_projects(async_client, private_user_with_token):
 
 
 @pytest.mark.asyncio
-async def test_get_project_by_id(async_client, private_user_with_token, global_dict):
+async def test_get_project(async_client, private_user_with_token, global_dict):
     response = await async_client.get(
-        url=f'/api/v1/projects/get_project_by_id/{global_dict["project_id"]}/',
+        url=f'/api/v1/projects/get/{global_dict["project_id"]}/',
         headers={
             'Authorization': f'{settings.TOKEN_TYPE} {private_user_with_token["access_token"]}'
         },
@@ -45,7 +45,7 @@ async def test_get_project_by_id(async_client, private_user_with_token, global_d
 @pytest.mark.asyncio
 async def test_get_project_members(async_client, private_user_with_token, global_dict):
     response = await async_client.get(
-        url=f'/api/v1/projects/get_project_by_id/{global_dict["project_id"]}/',
+        url=f'/api/v1/projects/get_project_members/{global_dict["project_id"]}/',
         headers={
             'Authorization': f'{settings.TOKEN_TYPE} {private_user_with_token["access_token"]}'
         },
@@ -54,11 +54,11 @@ async def test_get_project_members(async_client, private_user_with_token, global
 
 
 @pytest.mark.asyncio
-async def test_update_project(async_client, private_user_with_token, global_dict):
+async def test_patch_project(async_client, private_user_with_token, global_dict):
     project_payload = ProjectUpdateFactory.build()
     response = await async_client.patch(
         json=project_payload.dict(),
-        url=f'/api/v1/projects/update_project/{global_dict["project_id"]}/',
+        url=f'/api/v1/projects/patch/{global_dict["project_id"]}/',
         headers={
             'Authorization': f'{settings.TOKEN_TYPE} {private_user_with_token["access_token"]}'
         },
@@ -67,9 +67,9 @@ async def test_update_project(async_client, private_user_with_token, global_dict
 
 
 @pytest.mark.asyncio
-async def test_delete_project_by_id(async_client, private_user_with_token, global_dict):
+async def test_delete_project(async_client, private_user_with_token, global_dict):
     response = await async_client.delete(
-        url=f'/api/v1/projects/delete_project_by_id/{global_dict["project_id"]}/',
+        url=f'/api/v1/projects/delete/{global_dict["project_id"]}/',
         headers={
             'Authorization': f'{settings.TOKEN_TYPE} {private_user_with_token["access_token"]}'
         },

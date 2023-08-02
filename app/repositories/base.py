@@ -27,7 +27,7 @@ class BaseRepository(MongoManager):
 
     async def get_all(self) -> List[BaseUserRead]:
         await self.get_db()
-        return await self.db[self.collection].find({}).to_list(length=None)
+        return await self.db[self.collection].find().to_list(length=None)
 
     async def create(self, instance: dict) -> dict:
         result = await self.db[self.collection].insert_one(instance)
