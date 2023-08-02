@@ -1,9 +1,13 @@
 import faker
 
+from datetime import datetime
+from typing import List
+
 from app.config import settings
 
 from factory import Factory, Faker, SubFactory
 
+from app.schemas.projects import BaseProjectCreateUpdate, ProjectCreate
 from app.schemas.users import Login, BaseUserCreate
 
 fake = faker.Faker()
