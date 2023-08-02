@@ -31,3 +31,17 @@ async def create_project(project) -> dict:
 
 async def delete_project_by_id(project_id: str, owner_id: str):
     return await ProjectsRepository().delete_project_by_id(_id=project_id, owner_id=owner_id)
+
+
+async def add_user(project_id: str, user_id: str, owner_id: str):
+    user = await ProjectsRepository().get_user_in_members(user_id=user_id, _id=project_id)
+    if user:
+        raise HTTPException(status_code=409, detail="Such user already exist")
+    return await ProjectsRepository().add_user_to_project(user_id=user_id, _id=project_id, owner_id=owner_id)
+
+
+async def delete_user(project_id: str, user_id: str, owner_id: str):
+    user = await ProjectsRepository().get_user_in_members(user_id=user_id, _id=project_id)
+    if not user:
+        raise HTTPException(status_code=409, detail="Such user doesn't exist")
+    return await ProjectsRepository().delete_user_from_project(user_id=user_id, _id=project_id, owner_id=owner_id)

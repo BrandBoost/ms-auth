@@ -67,6 +67,28 @@ async def test_patch_project(async_client, private_user_with_token, global_dict)
 
 
 @pytest.mark.asyncio
+async def test_add_user_to_project(async_client, private_user_with_token, global_dict):
+    response = await async_client.patch(
+        url=f'/api/v1/projects/add_user/{global_dict["project_id"]}/?user_id=007',
+        headers={
+            'Authorization': f'{settings.TOKEN_TYPE} {private_user_with_token["access_token"]}'
+        },
+    )
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_delete_user_from_project(async_client, private_user_with_token, global_dict):
+    response = await async_client.delete(
+        url=f'/api/v1/projects/delete_user/{global_dict["project_id"]}/?user_id=007',
+        headers={
+            'Authorization': f'{settings.TOKEN_TYPE} {private_user_with_token["access_token"]}'
+        },
+    )
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
 async def test_delete_project(async_client, private_user_with_token, global_dict):
     response = await async_client.delete(
         url=f'/api/v1/projects/delete/{global_dict["project_id"]}/',

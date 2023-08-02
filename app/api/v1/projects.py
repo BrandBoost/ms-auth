@@ -14,7 +14,6 @@ from app.schemas.projects import (
 from fastapi.responses import PlainTextResponse
 from app.services import projects
 
-
 project_routes = APIRouter()
 
 
@@ -57,8 +56,21 @@ async def update_user_me(request: Request, body: PatchProjectUpdateRequest, proj
     return await projects.update_project(project_id=project_id, instance=body, owner_id=user_id)
 
 
+@project_routes.patch("/add_user/{project_id}/", status_code=200, response_model=ProjectReadMembers)
+async def add_user_to_project(request: Request, project_id: str, user_id: str):
+    owner_id = request.state.user_id
+    return await projects.add_user(project_id=project_id, user_id=user_id, owner_id=owner_id)
+
+
 @project_routes.delete("/delete/{project_id}/", status_code=204)
-async def delete_user_parser_by_id(request: Request, project_id: str,):
+async def delete_user_parser_by_id(request: Request, project_id: str):
     user_id = request.state.user_id
     await projects.delete_project_by_id(project_id=project_id, owner_id=user_id)
+    return PlainTextResponse("Deletion completed successfully")
+
+
+@project_routes.delete("/delete_user/{project_id}/", status_code=204)
+async def delete_user_from_project(request: Request, project_id: str, user_id: str):
+    owner_id = request.state.user_id
+    await projects.delete_user(project_id=project_id, user_id=user_id, owner_id=owner_id)
     return PlainTextResponse("Deletion completed successfully")
