@@ -14,6 +14,7 @@ class ProjectsRepository(BaseRepository):
     async def create_project(self, instance: dict, owner_id: str) -> dict:
         result = await self.db[self.collection].insert_one(instance)
         await UsersRepository().add_project_to_user(_id=owner_id, project_id=str(result.inserted_id))
+        await self.add_user_to_project(user_id=owner_id, _id=str(result.inserted_id))
         created_instance = await self.db[self.collection].find_one({"_id": result.inserted_id})  # type: ignore
         return created_instance  # type: ignore
 
