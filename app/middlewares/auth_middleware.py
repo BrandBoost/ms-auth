@@ -45,5 +45,5 @@ class ApiKeyMiddleware(BaseHTTPMiddleware):
                 return Response(content=json.dumps(error_message), status_code=401)
         else:
             # TODO check and mb add set full user model
-            request.state.user_id = "1"
+            request.state.user_id = "64cba335ebafbd4b9dfcbb26"
         return await call_next(request)

@@ -41,6 +41,7 @@ class UserCreateFactory(Factory):
     class Meta:
         model = dict
 
+    projects = list
     email = Faker("email")
     phone = fake.phone_number()
     password = Faker("password")

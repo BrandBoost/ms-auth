@@ -173,5 +173,5 @@ async def refresh_token(self, token: RefreshTokenSchema) -> TokenSchema:
     return await self.tokens.generate_response(user_id=user_id)
 
 
-def verify_password(self, *, plain_password: str, hashed_password: str) -> bool:
+async def verify_password(self, *, plain_password: str, hashed_password: str) -> bool:
     return self.pwd_context.verify(plain_password, hashed_password)

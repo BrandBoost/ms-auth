@@ -19,12 +19,12 @@ project_routes = APIRouter()
 
 @project_routes.post("/create/", status_code=201, response_model=BaseProjectRead)
 async def register_private_person(request: Request, data: ProjectCreate) -> tp.Dict[str, tp.Any]:
-    user_id = request.state.user_id
+    user_id = "64cba335ebafbd4b9dfcbb26"
     project = BaseProjectCreateUpdate(
         owner=user_id,
         created_at=datetime.now(), **data.dict()
     )
-    user = await projects.create_project(project=project)
+    user = await projects.create_project(project=project, owner_id=user_id)
     return user
 
 
@@ -57,9 +57,8 @@ async def update_user_me(request: Request, body: PatchProjectUpdateRequest, proj
 
 
 @project_routes.patch("/add_user/{project_id}/", status_code=200, response_model=ProjectReadMembers)
-async def add_user_to_project(request: Request, project_id: str, user_id: str):
-    owner_id = request.state.user_id
-    return await projects.add_user(project_id=project_id, user_id=user_id, owner_id=owner_id)
+async def add_user_to_project(project_id: str, user_id: str):
+    return await projects.add_user(project_id=project_id, user_id=user_id)
 
 
 @project_routes.delete("/delete/{project_id}/", status_code=204)
@@ -70,7 +69,6 @@ async def delete_user_parser_by_id(request: Request, project_id: str):
 
 
 @project_routes.delete("/delete_user/{project_id}/", status_code=204)
-async def delete_user_from_project(request: Request, project_id: str, user_id: str):
-    owner_id = request.state.user_id
-    await projects.delete_user(project_id=project_id, user_id=user_id, owner_id=owner_id)
+async def delete_user_from_project(project_id: str, user_id: str):
+    await projects.delete_user(project_id=project_id, user_id=user_id)
     return PlainTextResponse("Deletion completed successfully")
