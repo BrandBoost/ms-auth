@@ -35,8 +35,6 @@ async def get_user_projects(request: Request):
 @user_routes.get("/me/", status_code=200, response_model=BaseUserReadSchema)
 async def get_user(request: Request):
     user_id = request.state.user_id
-    print(user_id)
-    print(await services.get_user_by_id(user_id=user_id))
     return await services.get_user_by_id(user_id=user_id)
 
 
