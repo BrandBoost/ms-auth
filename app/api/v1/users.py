@@ -2,7 +2,7 @@ import typing as tp
 
 from datetime import datetime
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, UploadFile
 
 from app.config import logger  # noqa
 from app.enums import UserRole
@@ -20,7 +20,7 @@ from app.schemas import (
     LegalUserCreate,
 )
 from app.schemas.tokens import ObtainTokenResponseSchema
-from app.schemas.users import PatchUserUpdateRequest
+from app.schemas.users import PatchUserUpdateRequest, UploadAvatarResponse
 from app import services
 
 user_routes = APIRouter()
@@ -34,6 +34,15 @@ async def get_user(request: Request):
 @user_routes.patch("/me/", status_code=200, response_model=BaseUserReadSchema)
 async def update_user_me(request: Request, body: PatchUserUpdateRequest):
     return await services.update_user(user_id=request.state.user_id, instance=body)
+
+
+@user_routes.patch(
+    "/me/avatar/",
+    status_code=200,
+    response_model=UploadAvatarResponse
+)
+async def upload_avatar(request: Request, file: UploadFile) -> tp.Dict[str, tp.Any]:
+    return await services.save_user_avatar_image(user_id=request.state.user_id, body=file)
 
 
 @user_routes.post("/private_person/register/", status_code=201, response_model=ObtainTokenResponseSchema)

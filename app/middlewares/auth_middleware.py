@@ -35,7 +35,8 @@ async def authenticate(request: Request) -> tp.Tuple[bool, tp.Dict[str, str]]:
 
 class ApiKeyMiddleware(BaseHTTPMiddleware):
     authorize_paths = [
-        '/api/v1/users/me/'
+        '/api/v1/users/me/',
+        '/api/v1/users/me/avatar/'
     ]
 
     async def dispatch(self, request: Request, call_next: tp.Any) -> tp.Any:
