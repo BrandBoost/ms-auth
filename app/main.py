@@ -13,7 +13,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['http://localhost:3000', 'https://brandboost-demo.web.app',
-                   'https://auth-and-login-app.herokuapp.com'],
+                   'https://auth-and-login-app.herokuapp.com', 'http://93.125.18.46'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
