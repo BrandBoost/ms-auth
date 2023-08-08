@@ -35,8 +35,12 @@ async def authenticate(request: Request) -> tp.Tuple[bool, tp.Dict[str, str]]:
 
 class ApiKeyMiddleware(BaseHTTPMiddleware):
     authorize_paths = [
+<<<<<<< HEAD
         '/api/v1/users/me/',
         '/api/v1/users/me/avatar/'
+=======
+        '/api/v1/users/me/'
+>>>>>>> develop
     ]
 
     async def dispatch(self, request: Request, call_next: tp.Any) -> tp.Any:
@@ -46,5 +50,9 @@ class ApiKeyMiddleware(BaseHTTPMiddleware):
                 return Response(content=json.dumps(error_message), status_code=401)
         else:
             # TODO check and mb add set full user model
+<<<<<<< HEAD
             request.state.user_id = None
+=======
+            request.state.user_id = "1"
+>>>>>>> develop
         return await call_next(request)

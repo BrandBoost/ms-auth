@@ -3,7 +3,11 @@ import secrets
 import aiohttp
 import typing as tp
 
+<<<<<<< HEAD
 from fastapi import HTTPException, UploadFile
+=======
+from fastapi import HTTPException
+>>>>>>> develop
 
 from datetime import datetime, timedelta
 from bson import ObjectId
@@ -57,6 +61,7 @@ async def get_user_by_id(user_id: str) -> dict:
     return await UsersRepository().get_by_id(_id=ObjectId(user_id))  # type: ignore
 
 
+<<<<<<< HEAD
 async def save_user_avatar_image(user_id: str, body: UploadFile) -> tp.Dict[str, tp.Any]:
     import os
 
@@ -85,12 +90,19 @@ async def save_user_avatar_image(user_id: str, body: UploadFile) -> tp.Dict[str,
 
 
 async def update_user(user_id: str, instance: PatchUserUpdateRequest) -> tp.Dict[tp.Any, tp.Any]:
+=======
+async def update_user(user_id: str, instance: PatchUserUpdateRequest) -> tp.Dict[tp.Any, tp.Any] | None:
+>>>>>>> develop
     data = instance.dict(exclude_none=True)
     if not data:
         raise HTTPException(status_code=400, detail='Bad request.')
 
     await UsersRepository().update_by_id(instance_id=ObjectId(user_id), instance=data)
+<<<<<<< HEAD
     return await UsersRepository().get_by_id(_id=ObjectId(user_id))  # type: ignore
+=======
+    return await UsersRepository().get_by_id(_id=ObjectId(user_id))
+>>>>>>> develop
 
 
 async def get_all():

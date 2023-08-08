@@ -13,8 +13,11 @@ PORT = os.environ.get('FASTAPI_PORT', '8000')
 MONGO_URI = os.environ['MONGO_URI']
 DB_NAME = os.environ['DB_NAME']
 
+<<<<<<< HEAD
 SERVICE_URL = os.environ['SERVICE_URL']
 
+=======
+>>>>>>> develop
 # Token configuration
 SECRET_KEY = os.environ['SECRET_KEY']
 JWT_ALGORITHM = os.environ['JWT_ALGORITHM']

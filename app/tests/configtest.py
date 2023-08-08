@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 import asyncio
 import mongomock
 import pytest
 
 from typing import Generator, AsyncGenerator
+=======
+import mongomock
+import pytest
+
+from asyncio import get_event_loop
+
+>>>>>>> develop
 
 import pytest_asyncio
 from httpx import AsyncClient
@@ -32,6 +40,7 @@ async def private_user_with_token():
 
 
 @pytest_asyncio.fixture(scope="session")
+<<<<<<< HEAD
 def event_loop() -> Generator:
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
@@ -44,6 +53,17 @@ def async_client():
     import httpx
 
     return httpx.AsyncClient(app=app, base_url='http://test')
+=======
+def event_loop():
+    loop = get_event_loop()
+    yield loop
+
+
+@pytest_asyncio.fixture(scope="module")
+async def async_client():
+    async with AsyncClient(app=app, base_url="http://testserver") as client:
+        yield client
+>>>>>>> develop
 
 
 @pytest_asyncio.fixture
@@ -62,7 +82,11 @@ async def base_repository(mongo_client):
     return repository
 
 
+<<<<<<< HEAD
 @pytest_asyncio.fixture(scope="class")
+=======
+@pytest_asyncio.fixture(scope="session")
+>>>>>>> develop
 def global_dict():
     return {}
 

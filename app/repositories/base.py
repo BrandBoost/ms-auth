@@ -22,6 +22,12 @@ class BaseRepository(MongoManager):
     async def get_by_email(self, email: str):
         return await self.db[self.collection].find_one({"email": email})
 
+<<<<<<< HEAD
+=======
+    async def get_by_name(self, name: str):
+        return await self.db[self.collection].find_one({"name": name})
+
+>>>>>>> develop
     async def get_all(self) -> List[BaseUserRead]:
         await self.get_db()
         return await self.db[self.collection].find().to_list(length=None)

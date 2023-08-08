@@ -5,18 +5,26 @@ from fastapi.exceptions import HTTPException
 
 from bson import ObjectId
 from email_validator import validate_email, EmailNotValidError
+<<<<<<< HEAD
 from pydantic import BaseModel, validator, Field, ValidationError, root_validator
 
 from app.config import settings
+=======
+from pydantic import BaseModel, validator, Field, ValidationError
+
+>>>>>>> develop
 from app.enums import UserRole
 from app.schemas.mongo_validators import PyObjectId
 from app.schemas.tokens import Token
 
 
+<<<<<<< HEAD
 class UploadAvatarResponse(BaseModel):
     avatar_link: str
 
 
+=======
+>>>>>>> develop
 class PrivatePersonBase(BaseModel):
     first_name: str
     last_name: str
@@ -81,12 +89,15 @@ class BaseUserRead(BaseModel):
     is_verified: bool
     role: UserRole
     additional_info: dict
+<<<<<<< HEAD
     avatar_link: str | None
 
     @root_validator()
     def validator(cls, values: dict) -> dict:
         values['avatar_link'] = f"{settings.SERVICE_URL}/{values['avatar_link']}/"
         return values
+=======
+>>>>>>> develop
 
     class Config:
         allow_population_by_field_name = True

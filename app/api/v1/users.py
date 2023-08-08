@@ -2,7 +2,11 @@ import typing as tp
 
 from datetime import datetime
 
+<<<<<<< HEAD
 from fastapi import APIRouter, Request, UploadFile
+=======
+from fastapi import APIRouter, Request
+>>>>>>> develop
 
 from app.config import logger  # noqa
 from app.enums import UserRole
@@ -20,7 +24,11 @@ from app.schemas import (
     LegalUserCreate,
 )
 from app.schemas.tokens import ObtainTokenResponseSchema
+<<<<<<< HEAD
 from app.schemas.users import PatchUserUpdateRequest, UploadAvatarResponse
+=======
+from app.schemas.users import PatchUserUpdateRequest
+>>>>>>> develop
 from app import services
 
 user_routes = APIRouter()
@@ -32,6 +40,7 @@ async def get_user(request: Request):
 
 
 @user_routes.patch("/me/", status_code=200, response_model=BaseUserReadSchema)
+<<<<<<< HEAD
 async def update_user_me(request: Request, body: PatchUserUpdateRequest) -> tp.Dict[str, tp.Any]:
     return await services.update_user(user_id=request.state.user_id, instance=body)
 
@@ -45,6 +54,12 @@ async def upload_avatar(request: Request, file: UploadFile) -> tp.Dict[str, tp.A
     return await services.save_user_avatar_image(user_id=request.state.user_id, body=file)
 
 
+=======
+async def update_user_me(request: Request, body: PatchUserUpdateRequest):
+    return await services.update_user(user_id=request.state.user_id, instance=body)
+
+
+>>>>>>> develop
 @user_routes.post("/private_person/register/", status_code=201, response_model=ObtainTokenResponseSchema)
 async def register_private_person(data: PrivateUserCreate) -> tp.Dict[str, tp.Any]:
     person = CreateUpdatePrivateUserSchema(
