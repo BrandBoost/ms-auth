@@ -4,7 +4,7 @@ import secrets
 import aiohttp
 import typing as tp
 
-from fastapi import HTTPException, UploadFile, Depends
+from fastapi import HTTPException, UploadFile
 
 from datetime import datetime, timedelta
 from bson import ObjectId
