@@ -2,6 +2,7 @@ import os
 import json
 import secrets
 import aiohttp
+import requests
 import typing as tp
 
 from fastapi import HTTPException, UploadFile
@@ -191,8 +192,22 @@ async def activate_person(user_id: str):
     await UsersRepository().update_by_id(instance_id=ObjectId(user_id), instance=instance)
 
 
-async def delete_person(_id: str):
-    await UsersRepository().delete_by_id(_id=ObjectId(_id))
+async def delete_person(user_id: str, token: str):
+    url = "http://127.0.0.1:8001/api/v1/parsers/delete_user_parser_by_owner/"
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    try:
+        response = requests.delete(url, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as http_err:
+        print("HTTP error occurred:", http_err)
+    except Exception as e:
+        print("An error occurred:", e)
+
+    await UsersRepository().delete_by_id(_id=ObjectId(user_id))
+    return {"result": f'User {user_id} sucessfully deleted'}
 
 
 async def get_user_by_token(self, authorization: str) -> dict:

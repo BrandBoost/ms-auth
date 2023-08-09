@@ -31,6 +31,12 @@ async def get_user(request: Request):
     return await services.get_user_by_id(user_id=request.state.user_id)
 
 
+@user_routes.delete("/me/", status_code=200)
+async def delete_person(request: Request):
+    token = request.headers.get('Authorization').split(' ')[1]
+    return await services.delete_person(user_id=request.state.user_id, token=token)
+
+
 @user_routes.patch("/me/", status_code=200, response_model=BaseUserReadSchema)
 async def update_user_me(request: Request, body: PatchUserUpdateRequest):
     return await services.update_user(user_id=request.state.user_id, instance=body)
@@ -86,12 +92,6 @@ async def reset_password(data: ResetPasswordsSchema):
 async def activate_person(user_id: str):
     # todo: activate person in registration and add restrictions for unferifed user
     await services.activate_person(user_id=user_id)
-
-
-@user_routes.delete("/{user_id}/", status_code=200)
-async def delete_person(user_id: str):
-    # todo: activate person in registration and add restrictions for unferifed user
-    await services.delete_person(_id=user_id)
 
 
 @user_routes.post("/refresh_token/", response_model=TokenSchema, status_code=200)
