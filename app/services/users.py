@@ -1,3 +1,4 @@
+import os
 import json
 import secrets
 import aiohttp
@@ -49,7 +50,8 @@ async def read_secure_number(file_name, secure_number):
 
     expire_date, _id = data[secure_number]
     if datetime.now() > datetime.fromisoformat(expire_date):
-        raise HTTPException(status_code=409, detail='Secure number has expired.')
+        raise HTTPException(
+            status_code=409, detail='Secure number has expired.')
     return _id
 
 
@@ -58,24 +60,24 @@ async def get_user_by_id(user_id: str) -> dict:
 
 
 async def save_user_avatar_image(user_id: str, body: UploadFile) -> tp.Dict[str, tp.Any]:
-    import os
-
     try:
-        user = await UsersRepository().get_by_id(_id=ObjectId(user_id))
-        if user['avatar_link']:  # type: ignore
-            file_path = os.path.join(user['avatar_link'])  # type: ignore
+        user = await UsersRepository().get_by_id(ObjectId(user_id))
+        if user and user.get('avatar_link'):
+            file_path = user['avatar_link']
             if os.path.exists(file_path):
                 os.remove(file_path)
 
         if not os.path.exists("uploads"):
             os.makedirs("uploads")
 
-        file_name = body.filename.replace(' ', '_')  # type: ignore
+        file_name = body.filename.replace(' ', '_')
         file_path = os.path.join("uploads", file_name)
         with open(file_path, "wb") as f:
             f.write(body.file.read())
 
-        await UsersRepository().update_by_id(instance_id=ObjectId(user_id), instance={'avatar_link': file_path})
+        file_path = file_path.replace('\\', '/')
+
+        await UsersRepository().update_by_id(ObjectId(user_id), {'avatar_link': file_path})
 
         image_link = f"{settings.SERVICE_URL}/{file_path}/"
         return {"avatar_link": image_link}
@@ -101,14 +103,16 @@ async def create_user(person) -> dict:
     user = await UsersRepository().get_by_email(email=person.email)
     person.password = pwd_context.hash(person.password)
     if user:
-        raise HTTPException(status_code=409, detail='User with such email already exists')
+        raise HTTPException(
+            status_code=409, detail='User with such email already exists')
     return await UsersRepository().create(instance=person.dict())
 
 
 async def login_user(data: LoginSchema) -> TokenSchema:
     user = await UsersRepository().get_by_email(email=data.email)
     if user is None:
-        raise HTTPException(status_code=404, detail="No such user with chosen email.")
+        raise HTTPException(
+            status_code=404, detail="No such user with chosen email.")
 
     if not pwd_context.verify(data.password, user.get('password')):
         raise HTTPException(status_code=401, detail='Incorrect credentials.')
@@ -134,7 +138,8 @@ async def check_exist_company_by_inn(tin: str) -> dict:
             company_exist = await response.json()
             data = company_exist.get('items', None)
             if data is None or data == []:
-                raise HTTPException(status_code=404, detail='There no company with such TIN.')
+                raise HTTPException(
+                    status_code=404, detail='There no company with such TIN.')
             return data
 
 
@@ -154,7 +159,8 @@ async def forgot_password(email: EmailSchema):
     # TODO move to depends
     user = await UsersRepository().get_by_email(email=email.email)
     if user is None:
-        raise HTTPException(status_code=404, detail='No such user with chosen email.')
+        raise HTTPException(
+            status_code=404, detail='No such user with chosen email.')
 
     expire_date = datetime.now() + timedelta(minutes=30)
     await append_to_json_file(
