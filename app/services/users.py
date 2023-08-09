@@ -70,7 +70,7 @@ async def save_user_avatar_image(user_id: str, body: UploadFile) -> tp.Dict[str,
         if not os.path.exists("uploads"):
             os.makedirs("uploads")
 
-        file_name = body.filename.replace(' ', '_')
+        file_name = str(body.filename).replace(' ', '_')
         file_path = os.path.join("uploads", file_name)
         with open(file_path, "wb") as f:
             f.write(body.file.read())
