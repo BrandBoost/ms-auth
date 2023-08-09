@@ -2,8 +2,6 @@ import pytest
 from httpx import AsyncClient
 
 from app.config import settings
-from app.tests.configtest import async_client, event_loop, base_repository, mongo_client, global_dict, \
-    private_user_with_token
 from app.tests.data.projects_factories import ProjectCreateFactory, ProjectUpdateFactory
 
 

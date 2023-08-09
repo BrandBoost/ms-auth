@@ -192,8 +192,7 @@ async def activate_person(user_id: str):
 
 
 async def delete_person(_id: str):
-    instance = await get_user_by_id(user_id=_id)
-    await UsersRepository().delete_by_id(_id=instance["_id"])
+    await UsersRepository().delete_by_id(_id=ObjectId(_id))
 
 
 async def get_user_by_token(self, authorization: str) -> dict:

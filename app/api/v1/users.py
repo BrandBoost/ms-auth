@@ -60,7 +60,7 @@ async def register_private_person(data: PrivateUserCreate) -> tp.Dict[str, tp.An
 @user_routes.post("/legal_person/register/", status_code=201, response_model=TokenSchema)
 async def register_legal_person(data: LegalUserCreate):
     # todo: switch on after server's adjusting
-    # data.additional_info = await self.services.collect_additional_info(data.additional_info.dict())
+    data.additional_info = await services.collect_additional_info(data.additional_info.dict())
     person = CreateUpdateRegularUserSchema(role=UserRole.LEGAL_PERSON, is_verified=False,
                                            created_at=datetime.now(), **data.dict())
     user = await services.create_user(person=person)
@@ -86,6 +86,12 @@ async def reset_password(data: ResetPasswordsSchema):
 async def activate_person(user_id: str):
     # todo: activate person in registration and add restrictions for unferifed user
     await services.activate_person(user_id=user_id)
+
+
+@user_routes.delete("/{user_id}/", status_code=200)
+async def delete_person(user_id: str):
+    # todo: activate person in registration and add restrictions for unferifed user
+    await services.delete_person(_id=user_id)
 
 
 @user_routes.post("/refresh_token/", response_model=TokenSchema, status_code=200)
