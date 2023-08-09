@@ -39,6 +39,7 @@ jobs:
           echo USER_ID=${{ secrets.USER_ID }} >> .env
           echo USER_INN=${{ secrets.USER_INN }} >> .env
           echo USER_TOKEN=${{ secrets.USER_TOKEN }} >> .env
+          echo SERVICE_URL=some_url >> .env
       - name: Build docker
         run: docker-compose up -d --build
       - name: Test

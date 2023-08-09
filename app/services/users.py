@@ -3,7 +3,7 @@ import secrets
 import aiohttp
 import typing as tp
 
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 
 from datetime import datetime, timedelta
 from bson import ObjectId
@@ -55,6 +55,33 @@ async def read_secure_number(file_name, secure_number):
 
 async def get_user_by_id(user_id: str) -> dict:
     return await UsersRepository().get_by_id(_id=ObjectId(user_id))  # type: ignore
+
+
+async def save_user_avatar_image(user_id: str, body: UploadFile) -> tp.Dict[str, tp.Any]:
+    import os
+
+    try:
+        user = await UsersRepository().get_by_id(_id=ObjectId(user_id))
+        if user['avatar_link']:  # type: ignore
+            file_path = os.path.join(user['avatar_link'])  # type: ignore
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+        if not os.path.exists("uploads"):
+            os.makedirs("uploads")
+
+        file_name = body.filename.replace(' ', '_')  # type: ignore
+        file_path = os.path.join("uploads", file_name)
+        with open(file_path, "wb") as f:
+            f.write(body.file.read())
+
+        await UsersRepository().update_by_id(instance_id=ObjectId(user_id), instance={'avatar_link': file_path})
+
+        image_link = f"{settings.SERVICE_URL}/{file_path}/"
+        return {"avatar_link": image_link}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 async def update_user(user_id: str, instance: PatchUserUpdateRequest) -> tp.Dict[tp.Any, tp.Any] | None:

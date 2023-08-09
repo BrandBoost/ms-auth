@@ -34,8 +34,7 @@ async def get_user_projects(request: Request):
 
 @user_routes.get("/me/", status_code=200, response_model=BaseUserReadSchema)
 async def get_user(request: Request):
-    user_id = request.state.user_id
-    return await services.get_user_by_id(user_id=user_id)
+    return await services.get_user_by_id(user_id=request.state.user_id)
 
 
 @user_routes.patch("/me/", status_code=200, response_model=BaseUserReadSchema)
@@ -47,7 +46,6 @@ async def update_user_me(request: Request, body: PatchUserUpdateRequest):
 async def register_private_person(data: PrivateUserCreate) -> tp.Dict[str, tp.Any]:
     person = CreateUpdatePrivateUserSchema(
         role=UserRole.PRIVATE_PERSON,
-        projects=[],
         is_verified=False,
         created_at=datetime.now(), **data.dict()
     )
@@ -60,7 +58,7 @@ async def register_private_person(data: PrivateUserCreate) -> tp.Dict[str, tp.An
 async def register_legal_person(data: LegalUserCreate):
     # todo: switch on after server's adjusting
     # data.additional_info = await self.services.collect_additional_info(data.additional_info.dict())
-    person = CreateUpdateRegularUserSchema(role=UserRole.LEGAL_PERSON, is_verified=False, projects=[],
+    person = CreateUpdateRegularUserSchema(role=UserRole.LEGAL_PERSON, is_verified=False,
                                            created_at=datetime.now(), **data.dict())
     user = await services.create_user(person=person)
     return await services.create_tokens(user_id=str(user.get("_id")))
