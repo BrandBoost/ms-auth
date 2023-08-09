@@ -37,6 +37,12 @@ async def get_user(request: Request):
     return await services.get_user_by_id(user_id=request.state.user_id)
 
 
+@user_routes.delete("/me/", status_code=200)
+async def delete_person(request: Request):
+    token = request.headers.get('Authorization').split(' ')[1]
+    return await services.delete_person(user_id=request.state.user_id, token=token)
+
+
 @user_routes.patch("/me/", status_code=200, response_model=BaseUserReadSchema)
 async def update_user_me(request: Request, body: PatchUserUpdateRequest):
     return await services.update_user(user_id=request.state.user_id, instance=body)
@@ -66,7 +72,7 @@ async def register_private_person(data: PrivateUserCreate) -> tp.Dict[str, tp.An
 @user_routes.post("/legal_person/register/", status_code=201, response_model=TokenSchema)
 async def register_legal_person(data: LegalUserCreate):
     # todo: switch on after server's adjusting
-    # data.additional_info = await self.services.collect_additional_info(data.additional_info.dict())
+    data.additional_info = await services.collect_additional_info(data.additional_info.dict())
     person = CreateUpdateRegularUserSchema(role=UserRole.LEGAL_PERSON, is_verified=False,
                                            created_at=datetime.now(), **data.dict())
     user = await services.create_user(person=person)

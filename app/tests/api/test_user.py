@@ -5,7 +5,6 @@ import jwt
 from httpx import AsyncClient
 
 from app.repositories import UsersRepository
-from app.tests.configtest import async_client, event_loop, base_repository, mongo_client, global_dict, private_user_with_token
 from app.tests.data.user_factories import (
     UserFactoryLoginUnauthorized,
     LegalPersonCreateFactory,
