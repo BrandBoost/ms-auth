@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Union, Any, Optional
+from typing import Union, Any, Optional, List
 
 from fastapi.exceptions import HTTPException
 
@@ -172,3 +172,7 @@ class ResetPasswords(BaseModel):
             self.dict()
         except ValidationError as e:
             raise ValueError(str(e)) from e
+
+
+class ReadUserProjects(BaseModel):
+    projects: List[str]

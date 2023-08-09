@@ -20,10 +20,16 @@ from app.schemas import (
     LegalUserCreate,
 )
 from app.schemas.tokens import ObtainTokenResponseSchema
-from app.schemas.users import PatchUserUpdateRequest
+from app.schemas.users import PatchUserUpdateRequest, ReadUserProjects
 from app import services
 
 user_routes = APIRouter()
+
+
+@user_routes.get("/get_projects/", status_code=200, response_model=ReadUserProjects)
+async def get_user_projects(request: Request):
+    user_id = request.state.user_id
+    return await services.get_user_by_id(user_id)
 
 
 @user_routes.get("/me/", status_code=200, response_model=BaseUserReadSchema)
