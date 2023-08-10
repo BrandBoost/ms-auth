@@ -1,7 +1,9 @@
 import os
 import json
+import uuid
 import secrets
 import aiohttp
+import mimetypes
 import typing as tp
 
 from fastapi import HTTPException, UploadFile
@@ -59,7 +61,7 @@ async def get_user_by_id(user_id: str) -> dict:
 
 
 async def save_user_avatar_image(
-    user_id: str, body: UploadFile
+    user_id: str, file: UploadFile
 ) -> tp.Dict[str, tp.Any]:
     try:
         user = await UsersRepository().get_by_id(ObjectId(user_id))
@@ -68,13 +70,25 @@ async def save_user_avatar_image(
             if os.path.exists(file_path):
                 os.remove(file_path)
 
-        if not os.path.exists("uploads"):
-            os.makedirs("uploads")
+        media_path = os.path.join("media", "userdata", "avatars")
+        if not os.path.exists(media_path):
+            os.makedirs(media_path)
 
-        file_name = str(body.filename).replace(" ", "_")
-        file_path = os.path.join("uploads", file_name)
+        unique_filename = str(uuid.uuid4()).replace('-', '')
+
+        content_type, _ = mimetypes.guess_type(str(file.filename))
+        if content_type is None or not content_type.startswith("image"):
+            file_extension = "jpg"
+        else:
+            file_extension = str(mimetypes.guess_extension(content_type))
+            if file_extension:
+                file_extension = file_extension[1:]
+
+        file_name = f"{unique_filename}.{file_extension}"
+        file_path = os.path.join("media/userdata/avatars", file_name)
+
         with open(file_path, "wb") as f:
-            f.write(body.file.read())
+            f.write(file.file.read())
 
         file_path = file_path.replace("\\", "/")
 
