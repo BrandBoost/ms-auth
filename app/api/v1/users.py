@@ -39,7 +39,6 @@ async def get_user(request: Request):
 
 @user_routes.delete("/me/", status_code=200)
 async def delete_person(request: Request):
-    token = request.headers.get('Authorization').split(' ')[1]
     return await services.delete_person(user_id=request.state.user_id, token=token)
 
 
