@@ -2,7 +2,9 @@ import typing as tp
 
 from datetime import datetime
 
-from fastapi import APIRouter, Request, UploadFile
+from fastapi import APIRouter, Request, UploadFile, HTTPException
+from fastapi.responses import StreamingResponse
+
 
 from app.config import logger  # noqa
 from app.enums import UserRole
@@ -20,8 +22,9 @@ from app.schemas import (
     LegalUserCreate,
 )
 from app.schemas.tokens import ObtainTokenResponseSchema
-from app.schemas.users import PatchUserUpdateRequest, UploadAvatarResponse, ReadUserProjects
+from app.schemas.users import PatchUserUpdateRequest, ReadUserProjects
 from app import services
+from app.services import save_user_avatar_image
 
 user_routes = APIRouter()
 
@@ -39,22 +42,12 @@ async def get_user(request: Request):
 
 @user_routes.delete("/me/", status_code=200)
 async def delete_person(request: Request):
-    token = request.headers.get('Authorization').split(' ')[1]
-    return await services.delete_person(user_id=request.state.user_id, token=token)
+    return await services.delete_person(user_id=request.state.user_id)
 
 
 @user_routes.patch("/me/", status_code=200, response_model=BaseUserReadSchema)
 async def update_user_me(request: Request, body: PatchUserUpdateRequest):
     return await services.update_user(user_id=request.state.user_id, instance=body)
-
-
-@user_routes.patch(
-    "/me/avatar/",
-    status_code=200,
-    response_model=UploadAvatarResponse
-)
-async def upload_avatar(request: Request, file: UploadFile) -> tp.Dict[str, tp.Any]:
-    return await services.save_user_avatar_image(user_id=request.state.user_id, body=file)
 
 
 @user_routes.post("/private_person/register/", status_code=201, response_model=ObtainTokenResponseSchema)
@@ -108,3 +101,13 @@ async def refresh_token(token: RefreshTokenSchema):
 @user_routes.post("/check_inn/", status_code=200)
 async def check_company_by_inn(inn: str):
     await services.check_exist_company_by_inn(inn)
+
+
+@user_routes.patch('/avatars/{file_name}/')
+async def get_media(request: Request, file_name: UploadFile):
+    user_id = request.state.user_id
+    await save_user_avatar_image(user_id=user_id, file=file_name)
+    if file_name:
+        return StreamingResponse(file_name.file, media_type="image/jpeg")
+    else:
+        raise HTTPException(status_code=404, detail="File not found")

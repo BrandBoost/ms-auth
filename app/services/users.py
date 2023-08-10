@@ -3,7 +3,6 @@ import json
 import uuid
 import secrets
 import aiohttp
-import requests
 import mimetypes
 import typing as tp
 
@@ -62,7 +61,7 @@ async def get_user_by_id(user_id: str) -> dict:
 
 
 async def save_user_avatar_image(
-    user_id: str, body: UploadFile
+    user_id: str, file: UploadFile
 ) -> tp.Dict[str, tp.Any]:
     try:
         user = await UsersRepository().get_by_id(ObjectId(user_id))
@@ -75,26 +74,21 @@ async def save_user_avatar_image(
         if not os.path.exists(media_path):
             os.makedirs(media_path)
 
-        # Generate a random filename
         unique_filename = str(uuid.uuid4()).replace('-', '')
 
-        # Get the content type of the uploaded file
-        content_type, _ = mimetypes.guess_type(body.filename)
+        content_type, _ = mimetypes.guess_type(str(file.filename))
         if content_type is None or not content_type.startswith("image"):
-            # If content type is not an image, force the extension to be .jpg
             file_extension = "jpg"
         else:
-            # Get the file extension from the content type
-            file_extension = mimetypes.guess_extension(content_type)
+            file_extension = str(mimetypes.guess_extension(content_type))
             if file_extension:
-                file_extension = file_extension[1:]  # Remove the dot
+                file_extension = file_extension[1:]
 
-        # Construct the final filename with extension
         file_name = f"{unique_filename}.{file_extension}"
         file_path = os.path.join("media/userdata/avatars", file_name)
 
         with open(file_path, "wb") as f:
-            f.write(body.file.read())
+            f.write(file.file.read())
 
         file_path = file_path.replace("\\", "/")
 
@@ -102,7 +96,7 @@ async def save_user_avatar_image(
             ObjectId(user_id), {"avatar_link": file_path}
         )
 
-        image_link = f"{settings.SERVICE_URL}/{(file_path)}/"
+        image_link = f"{settings.SERVICE_URL}/{file_path}/"
         return {"avatar_link": image_link}
 
     except Exception as e:
@@ -171,7 +165,7 @@ async def check_exist_company_by_inn(tin: str) -> dict:
             return data
 
 
-async def collect_additional_info(additional_info: dict) -> dict:
+async def collect_additional_info(additional_info: dict):
     data = await check_exist_company_by_inn(tin=additional_info.get("inn", None))
     juridical_person = data[0]["ЮЛ"]
     name = juridical_person["НаимСокрЮЛ"]
