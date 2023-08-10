@@ -1,8 +1,10 @@
 import os
 import json
+import uuid
 import secrets
 import aiohttp
 import requests
+import mimetypes
 import typing as tp
 
 from fastapi import HTTPException, UploadFile
@@ -68,11 +70,28 @@ async def save_user_avatar_image(user_id: str, body: UploadFile) -> tp.Dict[str,
             if os.path.exists(file_path):
                 os.remove(file_path)
 
-        if not os.path.exists("uploads"):
-            os.makedirs("uploads")
+        media_path = os.path.join("media", "userdata", "avatars")
+        if not os.path.exists(media_path):
+            os.makedirs(media_path)
 
-        file_name = str(body.filename).replace(' ', '_')
-        file_path = os.path.join("uploads", file_name)
+        # Generate a random filename
+        unique_filename = str(uuid.uuid4()).replace('-', '')
+
+        # Get the content type of the uploaded file
+        content_type, _ = mimetypes.guess_type(body.filename)
+        if content_type is None or not content_type.startswith("image"):
+            # If content type is not an image, force the extension to be .jpg
+            file_extension = "jpg"
+        else:
+            # Get the file extension from the content type
+            file_extension = mimetypes.guess_extension(content_type)
+            if file_extension:
+                file_extension = file_extension[1:]  # Remove the dot
+
+        # Construct the final filename with extension
+        file_name = f"{unique_filename}.{file_extension}"
+        file_path = os.path.join("media/userdata/avatars", file_name)
+
         with open(file_path, "wb") as f:
             f.write(body.file.read())
 
@@ -80,7 +99,7 @@ async def save_user_avatar_image(user_id: str, body: UploadFile) -> tp.Dict[str,
 
         await UsersRepository().update_by_id(ObjectId(user_id), {'avatar_link': file_path})
 
-        image_link = f"{settings.SERVICE_URL}/{file_path}/"
+        image_link = f"{settings.SERVICE_URL}/{(file_path)}/"
         return {"avatar_link": image_link}
 
     except Exception as e:

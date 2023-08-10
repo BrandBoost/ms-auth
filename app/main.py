@@ -29,11 +29,11 @@ async def on_startup():
     logger.info('Startup event - connecting to the database')
 
 
-@app.get(path='/uploads/{file_name}/')
-async def get_uploads(file_name: str) -> FileResponse:
+@app.get(path='/media/userdata/avatars/{file_name}/')
+async def get_media(file_name: str) -> FileResponse:
     import os
 
-    file_path = os.path.join("uploads", file_name)
+    file_path = os.path.join("media/userdata/avatars", file_name)
     if os.path.exists(file_path):
         return FileResponse(file_path, media_type="image/jpeg")
     else:
