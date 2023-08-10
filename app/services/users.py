@@ -2,7 +2,6 @@ import os
 import json
 import secrets
 import aiohttp
-import requests
 import typing as tp
 
 from fastapi import HTTPException, UploadFile
@@ -152,7 +151,7 @@ async def check_exist_company_by_inn(tin: str) -> dict:
             return data
 
 
-async def collect_additional_info(additional_info: dict) -> dict:
+async def collect_additional_info(additional_info: dict):
     data = await check_exist_company_by_inn(tin=additional_info.get("inn", None))
     juridical_person = data[0]["ЮЛ"]
     name = juridical_person["НаимСокрЮЛ"]

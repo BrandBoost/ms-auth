@@ -22,5 +22,5 @@ class ProjectsRepository(BaseRepository):
         await self.get_db()
         return await self.db[self.collection].find({"owner": owner_id}).to_list(length=None)
 
-    async def delete_all_user_projects(self, owner_id: str) -> tp.List[BaseUserRead]:
+    async def delete_all_user_projects(self, owner_id: tp.Union[str, ObjectId]):
         return await self.db[self.collection].delete_many({"owner": owner_id})
