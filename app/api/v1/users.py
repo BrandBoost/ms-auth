@@ -1,10 +1,8 @@
 import typing as tp
-import os
 
 from datetime import datetime
 
-from fastapi import APIRouter, Request, UploadFile, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, Request
 
 
 from app.config import logger  # noqa
@@ -23,7 +21,7 @@ from app.schemas import (
     LegalUserCreate,
 )
 from app.schemas.tokens import ObtainTokenResponseSchema
-from app.schemas.users import PatchUserUpdateRequest, ReadUserProjects, UploadAvatarResponse
+from app.schemas.users import PatchUserUpdateRequest, ReadUserProjects
 from app import services
 
 user_routes = APIRouter()
@@ -101,22 +99,3 @@ async def refresh_token(token: RefreshTokenSchema):
 @user_routes.post("/check_inn/", status_code=200)
 async def check_company_by_inn(inn: str):
     await services.check_exist_company_by_inn(inn)
-
-
-@user_routes.patch(
-    "/me/avatar/",
-    status_code=200,
-    response_model=UploadAvatarResponse
-)
-async def upload_avatar(request: Request, file: UploadFile) -> tp.Dict[str, tp.Any]:
-    return await services.save_user_avatar_image(user_id=request.state.user_id, file=file)
-
-
-@user_routes.get('/media/userdata/avatars/{file_name}/')
-async def get_media(file_name: str):
-
-    file_path = os.path.join("media/userdata/avatars", file_name)
-    if os.path.exists(file_path):
-        return FileResponse(file_path, media_type="image/jpeg")
-    else:
-        raise HTTPException(status_code=404, detail="File not found")
