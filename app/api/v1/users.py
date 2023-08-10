@@ -1,9 +1,10 @@
 import typing as tp
+import os
 
 from datetime import datetime
 
 from fastapi import APIRouter, Request, UploadFile, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse
 
 
 from app.config import logger  # noqa
@@ -22,9 +23,8 @@ from app.schemas import (
     LegalUserCreate,
 )
 from app.schemas.tokens import ObtainTokenResponseSchema
-from app.schemas.users import PatchUserUpdateRequest, ReadUserProjects
+from app.schemas.users import PatchUserUpdateRequest, ReadUserProjects, UploadAvatarResponse
 from app import services
-from app.services import save_user_avatar_image
 
 user_routes = APIRouter()
 
@@ -103,11 +103,20 @@ async def check_company_by_inn(inn: str):
     await services.check_exist_company_by_inn(inn)
 
 
-@user_routes.patch('/avatars/{file_name}/')
-async def get_media(request: Request, file_name: UploadFile):
-    user_id = request.state.user_id
-    await save_user_avatar_image(user_id=user_id, file=file_name)
-    if file_name:
-        return StreamingResponse(file_name.file, media_type="image/jpeg")
+@user_routes.patch(
+    "/me/avatar/",
+    status_code=200,
+    response_model=UploadAvatarResponse
+)
+async def upload_avatar(request: Request, file: UploadFile) -> tp.Dict[str, tp.Any]:
+    return await services.save_user_avatar_image(user_id=request.state.user_id, file=file)
+
+
+@user_routes.get('/media/userdata/avatars/{file_name}/')
+async def get_media(file_name: str):
+
+    file_path = os.path.join("media/userdata/avatars", file_name)
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="image/jpeg")
     else:
         raise HTTPException(status_code=404, detail="File not found")
