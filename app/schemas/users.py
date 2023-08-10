@@ -165,7 +165,7 @@ class RetrieveLogin(Token):
 
 class Email(BaseModel):
     email: str
-    is_change: bool = True
+    is_change: bool = False
 
 
 class ResetPasswords(BaseModel):
