@@ -39,7 +39,7 @@ async def get_user(request: Request):
 
 @user_routes.delete("/me/", status_code=200)
 async def delete_person(request: Request):
-    return await services.delete_person(user_id=request.state.user_id, token=token)
+    return await services.delete_person(user_id=request.state.user_id)
 
 
 @user_routes.patch("/me/", status_code=200, response_model=BaseUserReadSchema)
