@@ -85,7 +85,7 @@ class BaseUserRead(BaseModel):
 
     @root_validator()
     def validator(cls, values: dict) -> dict:
-        values['avatar_link'] = f"{settings.SERVICE_URL}/{values['avatar_link']}/"
+        values["avatar_link"] = f"{settings.SERVICE_URL}/{values['avatar_link']}/"
         return values
 
     class Config:
@@ -99,13 +99,13 @@ class PatchUserUpdateRequest(BaseModel):
     phone: Optional[str]
     additional_info: Optional[dict]
 
-    @validator('email')
+    @validator("email")
     def validate_email(cls, email: str) -> str:
         try:
             validate_email(email)
             return email
         except EmailNotValidError:
-            raise ValueError('Invalid email')
+            raise ValueError("Invalid email")
 
 
 class UserCreateUpdate(BaseUserCreateUpdate):
@@ -165,6 +165,7 @@ class RetrieveLogin(Token):
 
 class Email(BaseModel):
     email: str
+    is_change: bool = True
 
 
 class ResetPasswords(BaseModel):

@@ -180,7 +180,7 @@ async def forgot_password(email: EmailSchema):
     user_first_name = str(user.get("additional_info")["first_name"])
     await services.send_mail(
         email=email.email,
-        content=f"{await services.open_html(str(user.get('email')), user_first_name, secure_number_str)}",
+        content=f"{await services.open_html(str(user.get('email')), user_first_name, secure_number_str, email.is_change)}",
     )
 
 

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Pipenv (ms-auth)" project-jdk-type="Python SDK" />
+  <component name="Black">
+    <option name="enabledOnSave" value="true" />
+    <option name="executionMode" value="BINARY" />
+    <option name="pathToExecutable" value="/opt/homebrew/bin/black" />
+    <option name="sdkUUID" value="0f010b96-da69-4a0b-8957-8233a0b60ae1" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.11.4 Docker Compose (app) (2)" project-jdk-type="Python SDK" />
 </project>
