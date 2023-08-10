@@ -14,6 +14,8 @@ MONGO_URI = os.environ['MONGO_URI']
 DB_NAME = os.environ['DB_NAME']
 
 SERVICE_URL = os.environ['SERVICE_URL']
+PARSER_COLLECTION_NAME = os.environ['PARSER_COLLECTION_NAME']
+
 
 # Token configuration
 SECRET_KEY = os.environ['SECRET_KEY']
