@@ -3,7 +3,7 @@ import typing as tp
 from datetime import datetime
 
 from bson import ObjectId
-from fastapi import APIRouter, Request, UploadFile, HTTPException
+from fastapi import APIRouter, Request, UploadFile, HTTPException, Depends
 
 from app.config import logger  # noqa
 from app.enums import UserRole
@@ -135,3 +135,8 @@ async def refresh_token(token: RefreshTokenSchema):
 @user_routes.post("/check_inn/", status_code=200)
 async def check_company_by_inn(inn: str):
     await services.check_exist_company_by_inn(inn)
+
+
+@user_routes.post("/test/", status_code=200)
+async def check_company_by_inn(request: Request = Depends()):
+    return request.url.netloc

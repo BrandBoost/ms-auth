@@ -7,7 +7,7 @@ import mimetypes
 import typing as tp
 import jwt
 from fastapi import HTTPException, UploadFile
-
+from pillow import Image
 from datetime import datetime, timedelta
 from bson import ObjectId
 from passlib.context import CryptContext
@@ -100,6 +100,9 @@ async def save_user_avatar_image(
             file_path = user["avatar_link"]
             if os.path.exists(file_path):
                 os.remove(file_path)
+            thumbnail_path = user.get("avatar_thumbnail_link")
+            if thumbnail_path and os.path.exists(thumbnail_path):
+                os.remove(thumbnail_path)
 
         media_path = os.path.join("media", "userdata", "avatars")
         if not os.path.exists(media_path):
@@ -123,12 +126,26 @@ async def save_user_avatar_image(
 
         file_path = file_path.replace("\\", "/")
 
+        # Создание и сохранение thumbnail (40x40)
+        thumbnail_path = os.path.join("uploads", f"thumbnail_{file_name}")
+        with Image.open(file_path) as img:
+            img.thumbnail((40, 40))
+            img.save(thumbnail_path)
+
+        # Создание и сохранение основного изображения (236x236)
+        main_image_path = os.path.join("uploads", f"main_{file_name}")
+        with Image.open(file_path) as img:
+            img.thumbnail((236, 236))
+            img.save(main_image_path)
+
         await UsersRepository().update_by_id(
-            ObjectId(user_id), {"avatar_link": file_path}
+            ObjectId(user_id),
+            {"avatar_link": main_image_path, "avatar_thumbnail_link": thumbnail_path},
         )
 
-        image_link = f"{settings.SERVICE_URL}/{file_path}/"
-        return {"avatar_link": image_link}
+        main_image_link = f"{settings.SERVICE_URL}/{main_image_path}/"
+        thumbnail_link = f"{settings.SERVICE_URL}/{thumbnail_path}/"
+        return {"avatar_link": main_image_link, "avatar_thumbnail_link": thumbnail_link}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
