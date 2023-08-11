@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import FileResponse
 
 from app.api import v1_router
 from app.config import logger
@@ -32,6 +31,7 @@ async def on_startup():
     # await RabbitManager.connect()
     # await RedisManager.connect()
     logger.info("Startup event - connecting to the database")
+
 
 
 @app.get(path="/uploads/{file_name}/")

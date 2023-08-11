@@ -28,9 +28,9 @@ async def open_html(user_email: str, user_name: str, user_code: str, action: boo
     environment = Environment(loader=FileSystemLoader("app/static/templates"))
     try:
         if action:
-            html_template = environment.get_template("reset.html")
-        else:
             html_template = environment.get_template("change.html")
+        else:
+            html_template = environment.get_template("reset.html")
         data = {
             "user_email": user_email,
             "user_name": user_name,
@@ -41,6 +41,7 @@ async def open_html(user_email: str, user_name: str, user_code: str, action: boo
 
     except IOError:
         logger.info("The template file doesn't found")
+
 
 
 async def get_email_verify_render(user_email: str, user_code: str):

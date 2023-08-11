@@ -26,7 +26,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 mongo_data/
-uploads/
+media/*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

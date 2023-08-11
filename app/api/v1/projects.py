@@ -30,6 +30,7 @@ async def register_private_person(
     return user
 
 
+
 @project_routes.get(
     "/get_projects/", status_code=200, response_model=tp.List[BaseProjectCreateUpdate]
 )

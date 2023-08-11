@@ -27,6 +27,7 @@ from app.schemas.users import (
     UploadAvatarResponse,
     ReadUserProjects,
 )
+
 from app import services
 
 user_routes = APIRouter()
