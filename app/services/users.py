@@ -65,8 +65,7 @@ async def email_verify(email: str):
         to_encode, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM
     )
     confirmation_url = (
-        f"http://127.0.0.1:8000/api/v1/users/verify/?confirm_code={encoded_jwt}"
-        # f"{settings.SERVICE_URL}/api/v1/users/verify/?confirm_code={confirmation_code}"
+        f"{settings.SERVICE_URL}/api/v1/users/verify/?confirm_code={confirmation_code}"
     )
     render = await get_email_verify_render(email, confirmation_url)
     await services.send_mail(email=email, content=render)
