@@ -29,7 +29,7 @@ async def register_private_person(request: Request, data: ProjectCreate) -> tp.D
     return user
 
 
-@project_routes.get("/get_projects/", status_code=200, response_model=tp.List[BaseProjectCreateUpdate])
+@project_routes.get("/get_projects/", status_code=200, response_model=tp.List[BaseProjectRead])
 async def get_project(request: Request):
     user_id = request.state.user_id
     return await projects.get_all_projects(owner_id=user_id)

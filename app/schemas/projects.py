@@ -8,11 +8,11 @@ from app.schemas.mongo_validators import PyObjectId
 
 
 class BaseProjectCreateUpdate(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str
     owner: str
     created_at: datetime
     members: List[str]
+    audio_messages: List[str | None]
     sites: List[str]
     activity_types: List[str]
     country: str
