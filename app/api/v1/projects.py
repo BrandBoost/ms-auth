@@ -35,7 +35,7 @@ async def get_project(request: Request):
     return await projects.get_all_projects(owner_id=user_id)
 
 
-@project_routes.get("/get/{project_id}/",
+@project_routes.get("/get/",
                     status_code=200,
                     response_model=BaseProjectCreateUpdate)
 async def get_project_by_id(request: Request, project_id: str):
@@ -43,7 +43,7 @@ async def get_project_by_id(request: Request, project_id: str):
     return await projects.get_project_by_id(project_id=project_id, owner_id=user_id)
 
 
-@project_routes.get("/get_project_members/{project_id}/",
+@project_routes.get("/get_project_members/",
                     status_code=200,
                     response_model=ProjectReadMembers)
 async def get_project_members(request: Request, project_id: str):
@@ -51,13 +51,13 @@ async def get_project_members(request: Request, project_id: str):
     return await projects.get_project_by_id(project_id=project_id, owner_id=user_id)
 
 
-@project_routes.patch("/patch/{project_id}/", status_code=200, response_model=BaseProjectCreateUpdate)
+@project_routes.patch("/patch/", status_code=200, response_model=BaseProjectCreateUpdate)
 async def update_user_me(request: Request, body: PatchProjectUpdateRequest, project_id: str):
     user_id = request.state.user_id
     return await projects.update_project(project_id=project_id, instance=body, owner_id=user_id)
 
 
-@project_routes.delete("/delete/{project_id}/", status_code=204)
+@project_routes.delete("/delete/", status_code=204)
 async def delete_user_parser_by_id(request: Request, project_id: str,):
     user_id = request.state.user_id
     await projects.delete_project_by_id(project_id=project_id, owner_id=user_id)
