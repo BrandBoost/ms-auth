@@ -12,7 +12,6 @@ class BaseProjectCreateUpdate(BaseModel):
     owner: str
     created_at: datetime
     members: List[str]
-    audio_messages: List[str | None]
     sites: List[str]
     activity_types: List[str]
     country: str
