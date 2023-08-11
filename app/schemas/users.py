@@ -65,10 +65,14 @@ class BaseUserRead(BaseModel):
     role: UserRole
     additional_info: dict
     avatar_link: str | None
+    avatar_thumbnail_link: str | None
 
     @root_validator()
     def validator(cls, values: dict) -> dict:
         values["avatar_link"] = f"{settings.SERVICE_URL}/{values['avatar_link']}/"
+        values[
+            "avatar_thumbnail_link"
+        ] = f"{settings.SERVICE_URL}/{values['avatar_thumbnail_link']}/"
         return values
 
     class Config:

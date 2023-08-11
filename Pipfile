@@ -60,6 +60,7 @@ pika = "*"
 mypy = "*"
 motor-stubs = "*"
 types-passlib = "*"
+pillow="==10.0.0"
 
 [dev-packages]
 
