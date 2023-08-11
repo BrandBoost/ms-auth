@@ -17,7 +17,9 @@ class BaseRepository(MongoManager):
         return await self.db[self.collection].find_one({"_id": _id})  # type: ignore
 
     async def update_password(self, user_id: str, _password: str):
-        return await self.db[self.collection].update_one({'_id': user_id}, {'_password': _password})
+        return await self.db[self.collection].update_one(
+            {"_id": user_id}, {"_password": _password}
+        )
 
     async def get_by_email(self, email: str):
         return await self.db[self.collection].find_one({"email": email})
@@ -35,10 +37,12 @@ class BaseRepository(MongoManager):
         return created_instance  # type: ignore
 
     async def update_by_id(self, instance_id: ObjectId, instance) -> None:
-        await self.db[self.collection].update_one({'_id': instance_id}, {"$set": instance})
+        await self.db[self.collection].update_one(
+            {"_id": instance_id}, {"$set": instance}
+        )
 
     async def delete_by_id(self, _id: tp.Union[str, ObjectId]) -> None:
         user_id = ObjectId(_id) if isinstance(_id, str) else _id
-        await self.db[self.collection].delete_one({'_id': user_id})
+        await self.db[self.collection].delete_one({"_id": user_id})
 
     # bulk create; bulk update, bulk_delete

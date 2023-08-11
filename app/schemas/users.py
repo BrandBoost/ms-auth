@@ -26,14 +26,6 @@ class PrivatePersonCreateUpdate(PrivatePersonBase):
     ...
 
 
-class PrivatePersonRead(PrivatePersonBase):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    email: str
-    phone: str
-    created_at: datetime
-    is_verified: bool
-
-
 class LegalPersonBaseCreate(PrivatePersonBase):
     inn: str
     company_name: str
@@ -48,21 +40,12 @@ class LegalPersonCreateUpdate(LegalPersonBase):
     ...
 
 
-class LegalPersonRead(LegalPersonBase):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    email: str
-    password: str
-    phone: str
-    created_at: datetime
-    is_verified: bool
-
-
 class BaseUserCreateUpdate(BaseModel):
     email: str
     phone: str
     password: str
     created_at: datetime
-    is_verified: bool
+    is_verified: bool = False
     role: UserRole
     additional_info: Union[PrivatePersonCreateUpdate, LegalPersonCreateUpdate]
 
@@ -78,7 +61,7 @@ class BaseUserRead(BaseModel):
     email: str
     phone: str
     created_at: datetime
-    is_verified: bool
+    is_verified: bool = False
     role: UserRole
     additional_info: dict
     avatar_link: str | None
@@ -106,10 +89,6 @@ class PatchUserUpdateRequest(BaseModel):
             return email
         except EmailNotValidError:
             raise ValueError("Invalid email")
-
-
-class UserCreateUpdate(BaseUserCreateUpdate):
-    role: UserRole = UserRole.ADMIN
 
 
 class UserRead(BaseUserRead):

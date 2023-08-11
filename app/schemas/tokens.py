@@ -10,10 +10,12 @@ class AccessToken(RefreshToken):
 
 
 class ObtainTokenResponseSchema(BaseModel):
-    access_token: str = Field(description='Access token')
-    refresh_token: str = Field(description='Refresh token')
-    access_token_expire: int = Field(description='Access token expire time in minutes')
-    refresh_token_expire: int = Field(description='Refresh token expire time in minutes')
+    access_token: str = Field(description="Access token")
+    refresh_token: str = Field(description="Refresh token")
+    access_token_expire: int = Field(description="Access token expire time in minutes")
+    refresh_token_expire: int = Field(
+        description="Refresh token expire time in minutes"
+    )
 
 
 class Token(AccessToken):

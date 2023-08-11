@@ -34,4 +34,3 @@ class ProjectUpdateFactory(Factory):
 class ProjectGetFactory(ProjectCreateFactory):
     created_at = datetime
     owner = "1"
-
