@@ -8,6 +8,6 @@ class BaseEnum(str, Enum):
 
 
 class UserRole(BaseEnum):
-    LEGAL_PERSON = 'legal person'
-    PRIVATE_PERSON = 'private person'
-    ADMIN = 'admin'
+    LEGAL_PERSON = "legal person"
+    PRIVATE_PERSON = "private person"
+    ADMIN = "admin"

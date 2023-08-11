@@ -15,7 +15,7 @@ from app.services import create_token
 from app.tests.data.user_factories import (
     UserFactoryLoginUnauthorized,
     LegalPersonCreateFactory,
-    PrivatePersonCreateFactory
+    PrivatePersonCreateFactory,
 )
 from app.repositories import UsersRepository
 
@@ -24,10 +24,14 @@ from app.repositories import UsersRepository
 async def private_user_with_token():
     person_payload = PrivatePersonCreateFactory.build()
     person_payload = person_payload.dict()
-    person_payload.update({'is_verified': True, 'role': 'legal person', 'created_at': datetime.now()})
+    person_payload.update(
+        {"is_verified": True, "role": "legal person", "created_at": datetime.now()}
+    )
     user_data = await UsersRepository().create(person_payload)
-    access_token = await create_token(token_type='access', user_id=str(user_data['_id']))
-    user_data['access_token'] = access_token
+    access_token = await create_token(
+        token_type="access", user_id=str(user_data["_id"])
+    )
+    user_data["access_token"] = access_token
     return user_data
 
 
@@ -52,8 +56,8 @@ def mongo_client():
 @pytest_asyncio.fixture
 async def base_repository(mongo_client):
     return None
-    db = mongo_client['testdb']
-    collection = db['test']
+    db = mongo_client["testdb"]
+    collection = db["test"]
     repository = UsersRepository()
     repository.collection = collection
     return repository

@@ -5,14 +5,14 @@ import secrets
 import aiohttp
 import mimetypes
 import typing as tp
-
+import jwt
 from fastapi import HTTPException, UploadFile
 
 from datetime import datetime, timedelta
 from bson import ObjectId
 from passlib.context import CryptContext
 
-from app.config import settings
+from app.config import settings, logger
 from app.repositories import UsersRepository, ProjectsRepository
 from app.schemas import (
     Token as TokenSchema,
@@ -24,6 +24,7 @@ from app.schemas import (
 )
 from app import services
 from app.schemas.users import PatchUserUpdateRequest
+from app.services.emails import get_email_verify_render
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -54,6 +55,36 @@ async def read_secure_number(file_name, secure_number):
     if datetime.now() > datetime.fromisoformat(expire_date):
         raise HTTPException(status_code=409, detail="Secure number has expired.")
     return _id
+
+
+async def email_verify(email: str):
+    to_encode = {"email": email}
+    expire = datetime.utcnow() + timedelta(minutes=settings.JWT_REFRESH_TTL)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM
+    )
+    confirmation_url = (
+        f"{settings.SERVICE_URL}/api/v1/users/verify/?confirm_code={confirmation_code}"
+    )
+    render = await get_email_verify_render(email, confirmation_url)
+    await services.send_mail(email=email, content=render)
+
+
+async def verify_user_email(confirm_code: str):
+    try:
+        payload = jwt.decode(
+            confirm_code, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
+        await UsersRepository().update_status_by_email(email=payload.get("email"))
+    except jwt.ExpiredSignatureError as exc:
+        logger.exception(exc)
+        raise HTTPException(
+            status_code=401, detail={"error": "Invalid token or token is expired"}
+        )
+    except Exception as exc:
+        logger.exception(exc)
+        raise HTTPException(status_code=500, detail={"error": "Internal server error"})
 
 
 async def get_user_by_id(user_id: str) -> dict:
@@ -114,18 +145,17 @@ async def update_user(
     return await UsersRepository().get_by_id(_id=ObjectId(user_id))
 
 
-async def get_all():
-    return await UsersRepository().get_all()
-
-
 async def create_user(person) -> dict:
+    await UsersRepository().delete_by_id(ObjectId("64d651482990268595d59574"))
     user = await UsersRepository().get_by_email(email=person.email)
     person.password = pwd_context.hash(person.password)
     if user:
         raise HTTPException(
             status_code=409, detail="User with such email already exists"
         )
-    return await UsersRepository().create(instance=person.dict())
+    user = await UsersRepository().create(instance=person.dict())
+    await email_verify(person.email)
+    return user
 
 
 async def login_user(data: LoginSchema) -> TokenSchema:
@@ -135,6 +165,9 @@ async def login_user(data: LoginSchema) -> TokenSchema:
 
     if not pwd_context.verify(data.password, user.get("password")):
         raise HTTPException(status_code=401, detail="Incorrect credentials.")
+
+    if not user.get("is_verified"):
+        raise HTTPException(status_code=401, detail="You need to confirm your email")
 
     tokens = await services.create_tokens(user_id=str(user.get("_id")))
     return RetrieveLoginSchema(user=user, **tokens.dict())

@@ -4,7 +4,7 @@ from bson import ObjectId
 
 
 def serializer(value: bytes):
-    return json.loads(value.decode('utf-8'))
+    return json.loads(value.decode("utf-8"))
 
 
 class PyObjectId(ObjectId):
