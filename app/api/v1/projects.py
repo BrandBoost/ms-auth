@@ -23,6 +23,7 @@ async def register_private_person(request: Request, data: ProjectCreate) -> tp.D
     user_id = request.state.user_id
     project = BaseProjectCreateUpdate(
         owner=user_id,
+        audio_messages=[],
         created_at=datetime.now(), **data.dict()
     )
     user = await projects.create_project(project=project)
